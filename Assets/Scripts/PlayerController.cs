@@ -6,14 +6,17 @@ using System;
 
 public class PlayerController : NetworkBehaviour
 {
+    // Sprite used for client's ship
     public Sprite localSprite;
+
+    // Default torpedo
     public GameObject dumbTorp;
 
+    // Transforms for front and rear of ship
     public Transform torpSpawn;
     public Transform back;
 
-
-
+    // Torpedo variables
     public int reloadSpeed = 300;
     public float TorpSpeed = 20;
 
@@ -21,38 +24,39 @@ public class PlayerController : NetworkBehaviour
     private int ammo = 8;
     public int maxAmmo = 8;
 
+
+    // Network Identifier
     [SyncVar]
     public string nameNet;
-
     public NetworkIdentity netPlay;
 
-
-
-
-
-
+    // Physics and movement
     public float linearDrag;
     public float angularDrag;
     private Rigidbody2D rb;
 
+
+    // Misc
     private int flux;
 
 
 
 
-    // Constructor when first active.
+    // Constructor For All
     void Start()
     {
-        // Assigns rigidbody
+        // Assigns rigidbody for torque
         rb = gameObject.GetComponent<Rigidbody2D>();
         rb.drag = linearDrag;
         rb.angularDrag = angularDrag;
 
-
+        // Assigns Network Identity to variable
         netPlay = GetComponent<NetworkIdentity>();
 
+        // Checks if Network Identity is valid
         if (netPlay != null)
         {
+            // Assigns name to nameNet and changes object name
             nameNet = netPlay.netId.ToString();
             gameObject.name = "Player " + nameNet;
         }
@@ -72,7 +76,7 @@ public class PlayerController : NetworkBehaviour
         Camera.main.GetComponent<CamTrack>().target = gameObject.transform;
     }
 
-
+    // Called once every frame
     void Update()
     {
         // Returns if not a local player
@@ -80,6 +84,8 @@ public class PlayerController : NetworkBehaviour
         {
             return;
         }
+
+        // Base Torpedo Fire Logic
 
         bool fireDown = Input.GetButtonDown("Fire1");
         bool fireHeld = Input.GetButton("Fire1");
@@ -116,7 +122,7 @@ public class PlayerController : NetworkBehaviour
 
     }
 
-
+    // Called once per physics update (0.02s)
     void FixedUpdate()
     {
 
@@ -125,14 +131,15 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
-
+        // Sanity check for a rigidbody.
         if (rb == null)
         {
             rb = gameObject.GetComponent<Rigidbody2D>();
 
             if (rb == null)
             {
-                throw new Exception("No rigid body for " + gameObject.name + ". ");
+                Debug.LogError("No rigid body for " + gameObject.name + ". ");
+                return;
             }
         }
 
@@ -179,22 +186,29 @@ public class PlayerController : NetworkBehaviour
             torpSpawn.position,
             torpSpawn.rotation);
 
-        // Add velocity to the bullet
-        
+
+        // Passes information to the torpedo. Mostly for collision logic.
         var script = torpA.GetComponent<torpScript>();
         script.owner = nameNet;
 
+        // Add velocity to the bullet
         torpA.GetComponent<Rigidbody2D>().velocity = torpA.transform.up * TorpSpeed;
-  
 
+        // This will instantiate the object on the clients
         NetworkServer.Spawn(torpA);
 
         // Destroy the bullet after 2 seconds.
         Destroy(torpA, 20.0f);
     }
 
+
+    // Coroutine for ammo regen
     IEnumerator ammoRegen()
     {
+
+        // Flux addition to reloadSpeed.
+        // The more torpedos being reloaded, the slower the reload speed is.
+
         flux += reloadSpeed / 10;
 
         for (int a = 0; a < reloadSpeed; a++)
@@ -206,12 +220,15 @@ public class PlayerController : NetworkBehaviour
 
         ammo++;
 
+        // Sanity Check
         if (ammo >= maxAmmo)
         {
             ammo = maxAmmo;
             flux = 0;
         }
+
+
     }
 
-  
+
 }

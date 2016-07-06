@@ -2,20 +2,23 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class GameManager : NetworkBehaviour {
+public class GameManager : NetworkBehaviour
+{
 
 
     public NetworkManager netManager;
 
 
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    // Use this for initialization
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
 
 
 
@@ -24,7 +27,7 @@ public class GameManager : NetworkBehaviour {
 
         if (z)
         {
-            
+
             return;
         }
 

@@ -7,59 +7,47 @@ public class HealthManager : NetworkBehaviour
 
     public const int maxHealth = 100;
 
-    public RectTransform hpUI;
-
     // When changed...
-    [SyncVar(hook = "OnChangeHealth")]
+    [SyncVar]
     public int health = maxHealth;
 
 
     // Use this for initialization
     void Start()
     {
-
+        return;
     }
 
     // Update is called once per frame
     void Update()
     {
-
-
         return;
     }
 
 
-    public void damage(int dmg)
+    public void Damage(int dmg)
     {
-        // Checks if not server.
-        if (!isServer)
-        {
-            return;
-        }
-
+        // Checks if not server. Since health is a SyncVar.
+        
         health -= dmg;
 
-
-
-
-
         Debug.Log("Current HP: " + health + "/" + maxHealth);
+
+        OnChangeHealth();
+
     }
 
 
-    void OnChangeHealth(int health)
+    void OnChangeHealth()
     {
-        if (hpUI != null)
-        {
-            hpUI.sizeDelta = new Vector2(0, hpUI.sizeDelta.y);
-            
-
-        }
         if (health <= 0)
         {
             CmdDeath();
         }
     }
+
+
+
 
     [Command]
     void CmdDeath()
