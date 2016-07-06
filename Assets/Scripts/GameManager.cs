@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 public class GameManager : NetworkBehaviour {
 
 
-    public NetworkManager netManager;
+    public NetworkManager hello;
 
 
 
@@ -18,13 +18,10 @@ public class GameManager : NetworkBehaviour {
 	void Update () {
 
 
-
-
         bool z = Input.GetButtonDown("Fire1");
 
         if (z)
         {
-            
             return;
         }
 
