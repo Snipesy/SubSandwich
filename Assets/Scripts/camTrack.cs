@@ -15,7 +15,7 @@ public class camTrack : MonoBehaviour {
     private float camDistance = -10;
     private bool isTracking = false;
     private Transform target = null;
-    private 
+    private bool zoomEnabled = true;
 
     // Use this for initialization
     void Start () {
@@ -27,11 +27,11 @@ public class camTrack : MonoBehaviour {
 	void Update () {
 
 
-        if(self.rotateEnabled == true)
+        if(this.zoomEnabled == true)
         {
             if (Input.GetAxis("Mouse ScrollWheel") > 0f && cam.orthographicSize > minSize)
                 cam.orthographicSize -= 1;
-            else if (Input.GetAxis("Mouse ScrollWheel") < 0f && cam.orthographicSize < maxSize);
+            else if (Input.GetAxis("Mouse ScrollWheel") < 0f && cam.orthographicSize < maxSize)
                 cam.orthographicSize += 1;
         }
 
@@ -49,8 +49,12 @@ public class camTrack : MonoBehaviour {
 
 	}
 
-
-    public bool Track(Transform target)
+    //Make camera track object.
+    //Returns true if successful and false if failed
+    //Parameters:
+    //  target - game object to be targeted
+    //  startTracking - Whether or not to begin tracking immediately
+    public bool Track(Transform target, bool startTracking = false)
     {
         if (target == null)
         {
@@ -59,13 +63,30 @@ public class camTrack : MonoBehaviour {
         }
 
         this.target = target;
-        this.is_tracking = true;
+        this.isTracking = true;
 
+        return true;
     }
 
+
+    //Untrack camera.
+    //Returns true if successful
     public bool Untrack()
     {
         this.isTracking = false;
         this.target = null;
+        return true;
+    }
+
+
+    //Begin tracking an object if target is assigned
+    //Returns true if successful or false if failed.
+    public bool StartTracking()
+    {
+        if (target == null)
+            return false;
+
+        this.isTracking = true;
+        return true;
     }
 }
