@@ -27,8 +27,6 @@ public class PlayerController : NetworkBehaviour
 
         var sr = GetComponent<SpriteRenderer>();
         sr.sprite = localSprite;
-        //var sr = GetComponent<SpriteRenderer>();
-        //sr.sprite = localSprite;
     }
 
 
