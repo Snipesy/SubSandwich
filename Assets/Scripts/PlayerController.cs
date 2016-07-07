@@ -69,7 +69,7 @@ public class PlayerController : NetworkBehaviour
 
         // Temporary Name Changer
 
-        Camera.main.GetComponent<CamTrack>().target = gameObject.transform;
+        Camera.main.GetComponent<CamTrack>().Track(gameObject.transform);
     }
 
 
