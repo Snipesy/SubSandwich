@@ -13,7 +13,7 @@ public class NetBehaviourScript : NetworkManager
 
     void Start()
     {
-        
+
     }
 
 
@@ -35,7 +35,7 @@ public class NetBehaviourScript : NetworkManager
             player = (GameObject)GameObject.Instantiate(playerPrefab, GetStartPosition().position, GetStartPosition().rotation);
         }
 
-        
+
         NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
     }
 

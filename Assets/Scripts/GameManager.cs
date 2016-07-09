@@ -49,13 +49,15 @@ public class GameManager : MonoBehaviour
         {
             net.StartClient();
         }
-        
+
         if (net.IsClientConnected())
         {
+
             if (Input.GetKeyDown(KeyCode.Alpha4))
             {
                 net.StopHost();
             }
+
         }
 
 

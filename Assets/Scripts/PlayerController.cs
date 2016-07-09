@@ -35,6 +35,7 @@ public class PlayerController : NetworkBehaviour
     public float angularDrag;
     private Rigidbody2D rb;
 
+    [SyncVar]
     public bool enableDebugging = true;
 
     public GameObject target;
@@ -46,7 +47,11 @@ public class PlayerController : NetworkBehaviour
     private DebuggingClass debug;
 
 
+    // Collision Stuffs
+    private delegate void MakeInvuln();
 
+    [SyncEvent]
+    private event MakeInvuln EventInvulnEvent;
 
 
     // Constructor For All
@@ -71,7 +76,7 @@ public class PlayerController : NetworkBehaviour
         }
 
         debug = GetComponent<DebuggingClass>();
-
+        EventInvulnEvent += RpcInvuln;
     }
 
     // Local Only Constructor
@@ -97,7 +102,6 @@ public class PlayerController : NetworkBehaviour
         // Base Torpedo Fire Logic
 
         bool fireDown = Input.GetButtonDown("Fire1");
-        bool fireHeld = Input.GetButton("Fire1");
 
         if (ammo > 0)
         {
@@ -124,7 +128,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     // Called once per physics update (0.02s)
-    [ClientCallback]
+
     void FixedUpdate()
     {
 
@@ -165,6 +169,11 @@ public class PlayerController : NetworkBehaviour
             rb.AddTorque((.01f * linearDrag), ForceMode2D.Impulse);
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            CmdInvuln();
+        }
+
     }
 
     void applyForce(Transform t, float power)
@@ -203,6 +212,36 @@ public class PlayerController : NetworkBehaviour
         Destroy(torpA, 20.0f);
     }
 
+    [Command]
+    public void CmdInvuln()
+    {
+        EventInvulnEvent();
+    }
+
+    [ClientRpc]
+    void RpcInvuln()
+    {
+        StartCoroutine("invuln");
+    }
+
+    IEnumerator invuln()
+    {
+        var start = Time.timeSinceLevelLoad;
+        var col = GetComponent<Collider2D>();
+
+
+        if (col.enabled == false)
+            yield break;
+
+
+        col.enabled = false;
+        while (start + 2f > Time.timeSinceLevelLoad)
+        {
+            yield return null;
+        }
+        col.enabled = true;
+    }
+
 
     // Coroutine for ammo regen
     IEnumerator ammoRegen()
@@ -231,7 +270,6 @@ public class PlayerController : NetworkBehaviour
 
 
     }
-
 
 
 

@@ -30,7 +30,7 @@ public class HealthManager : NetworkBehaviour
     public void Damage(int dmg)
     {
         // Checks if not server. Since health is a SyncVar.
-        
+
         health -= dmg;
 
         Debug.Log("Current HP: " + gameObject.name + " : " + health + "/" + maxHealth);
@@ -58,12 +58,12 @@ public class HealthManager : NetworkBehaviour
     {
         if (health <= 0)
         {
-           Debug.Log(gameObject.name + " Commanded Death");
+            Debug.Log(gameObject.name + " Commanded Death");
             Effect(destructionEffect);
 
             Destroy(gameObject);
 
-            
+
         }
 
     }
@@ -80,7 +80,7 @@ public class HealthManager : NetworkBehaviour
             NetworkServer.Spawn(fx);
         }
 
-        
+
 
 
     }

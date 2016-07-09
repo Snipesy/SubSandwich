@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CamTrack : MonoBehaviour {
+public class CamTrack : MonoBehaviour
+{
 
     //Public
     public float trackingSpeed;
@@ -9,7 +10,7 @@ public class CamTrack : MonoBehaviour {
     public float minSize = 3;
     public float maxSize = 20;
     public Camera cam;
-    
+
 
     //Private 
     private float camDistance = -10;
@@ -19,16 +20,18 @@ public class CamTrack : MonoBehaviour {
 
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         camDistance = defaultDistance;
 
- 	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
 
 
-        if(this.zoomEnabled == true)
+        if (this.zoomEnabled == true)
         {
             if (Input.GetAxis("Mouse ScrollWheel") > 0f && cam.orthographicSize > minSize)
                 cam.orthographicSize -= 1;
@@ -36,7 +39,7 @@ public class CamTrack : MonoBehaviour {
                 cam.orthographicSize += 1;
         }
 
-        
+
         if (this.isTracking && this.target != null)
         {
             Vector2 newPosition;
@@ -44,7 +47,7 @@ public class CamTrack : MonoBehaviour {
             float snapDistance = cam.orthographicSize * .1f;
             if (calc < snapDistance + cam.orthographicSize)
             {
-                newPosition = Vector2.Lerp(transform.position, target.position, 
+                newPosition = Vector2.Lerp(transform.position, target.position,
                 Time.deltaTime * (trackingSpeed / cam.orthographicSize));
             }
             else
@@ -52,13 +55,13 @@ public class CamTrack : MonoBehaviour {
                 newPosition = Vector2.Lerp(transform.position, target.position, calc *
                 Time.deltaTime * (1f / cam.orthographicSize));
             }
-            transform.position = new Vector3(newPosition.x,newPosition.y, camDistance);
-   
+            transform.position = new Vector3(newPosition.x, newPosition.y, camDistance);
+
         }
 
         // Creates background and keeps it in line
 
-	}
+    }
 
     //Make camera track object.
     //Returns true if successful and false if failed

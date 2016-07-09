@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class fxBehaviour : MonoBehaviour {
+public class fxBehaviour : MonoBehaviour
+{
 
 
     private AudioSource source;
@@ -12,8 +13,8 @@ public class fxBehaviour : MonoBehaviour {
 
 
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
         source = GetComponent<AudioSource>();
 
@@ -21,11 +22,12 @@ public class fxBehaviour : MonoBehaviour {
         source.PlayDelayed(delay);
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
 
         if (source.isPlaying == false)
             Destroy(gameObject);
-	}
+    }
 }

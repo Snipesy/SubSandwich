@@ -78,7 +78,7 @@ public class torpScript : NetworkBehaviour
 
     }
 
-    
+
     public void SpawnFX(GameObject fx)
     {
         var fx2 = (GameObject)Instantiate(
