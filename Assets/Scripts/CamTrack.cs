@@ -17,6 +17,7 @@ public class CamTrack : MonoBehaviour {
     private Transform target = null;
     private bool zoomEnabled = true;
 
+
     // Use this for initialization
     void Start () {
         camDistance = defaultDistance;
@@ -38,9 +39,19 @@ public class CamTrack : MonoBehaviour {
         
         if (this.isTracking && this.target != null)
         {
-
-
-            var newPosition = Vector2.Lerp(transform.position, target.position, Time.deltaTime * (trackingSpeed/cam.orthographicSize));
+            Vector2 newPosition;
+            float calc = Vector2.Distance(target.position, transform.position);
+            float snapDistance = cam.orthographicSize * .1f;
+            if (calc < snapDistance + cam.orthographicSize)
+            {
+                newPosition = Vector2.Lerp(transform.position, target.position, 
+                Time.deltaTime * (trackingSpeed / cam.orthographicSize));
+            }
+            else
+            {
+                newPosition = Vector2.Lerp(transform.position, target.position, calc *
+                Time.deltaTime * (1f / cam.orthographicSize));
+            }
             transform.position = new Vector3(newPosition.x,newPosition.y, camDistance);
    
         }

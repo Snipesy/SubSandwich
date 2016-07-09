@@ -9,7 +9,12 @@ public class torpScript : NetworkBehaviour
     public int damage = 30;
     public float armTime = 2;
     private float initializationTime;
+
+    [HideInInspector]
     public string owner;
+
+    public GameObject dudFX;
+    public GameObject hitFX;
 
 
     // Use this for initialization
@@ -23,12 +28,12 @@ public class torpScript : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-
     }
 
     // Called whenever an object ENTERS a collision trigger.
     void OnTriggerEnter2D(Collider2D col)
     {
+        // Return if not the server
         if (!isServer)
         {
             return;
@@ -47,6 +52,9 @@ public class torpScript : NetworkBehaviour
                 if (x.nameNet == owner)
                     return;
             }
+
+            SpawnFX(dudFX);
+
             Destroy(gameObject);
             return;
         }
@@ -62,11 +70,23 @@ public class torpScript : NetworkBehaviour
 
         // Call damage method in HealthManager
         hpmanage.Damage(damage);
-
+        SpawnFX(hitFX);
 
         Destroy(gameObject);
 
 
+
+    }
+
+    
+    public void SpawnFX(GameObject fx)
+    {
+        var fx2 = (GameObject)Instantiate(
+            fx,
+            gameObject.transform.position,
+            Quaternion.identity);
+
+        NetworkServer.Spawn(fx2);
 
     }
 

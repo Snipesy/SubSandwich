@@ -2,14 +2,20 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class GameManager : NetworkBehaviour
+public class GameManager : MonoBehaviour
 {
 
 
-    public NetworkManager netManager;
+    public NetworkManager net;
 
 
 
+    NetworkClient myClient;
+
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
     // Use this for initialization
     void Start()
     {
@@ -20,17 +26,43 @@ public class GameManager : NetworkBehaviour
     void Update()
     {
 
+        bool canHost = true;
 
-
-
-        bool z = Input.GetButtonDown("Fire1");
-
-        if (z)
+        if (canHost)
         {
+            // Start server online (No local client)
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                net.StartServer();
+            }
 
-            return;
+
+            // Start Server and local client
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                net.StartHost();
+            }
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            net.StartClient();
+        }
+        
+        if (net.IsClientConnected())
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                net.StopHost();
+            }
         }
 
 
+    }
+
+    public void OnConnected(NetworkMessage msg)
+    {
+        Debug.Log("Connected!");
     }
 }
