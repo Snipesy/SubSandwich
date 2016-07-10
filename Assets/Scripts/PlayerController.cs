@@ -35,11 +35,23 @@ public class PlayerController : NetworkBehaviour
     public float angularDrag;
     private Rigidbody2D rb;
 
+    [SyncVar]
+    public bool enableDebugging = true;
+
+    public GameObject target;
+
 
     // Misc
     private int flux;
 
+    private DebuggingClass debug;
 
+
+    // Collision Stuffs
+    private delegate void MakeInvuln();
+
+    [SyncEvent]
+    private event MakeInvuln EventInvulnEvent;
 
 
     // Constructor For All
@@ -58,10 +70,13 @@ public class PlayerController : NetworkBehaviour
         {
             // Assigns name to nameNet and changes object name
             nameNet = netPlay.netId.ToString();
+
+            // Assigns name to gameobject. This really only works for the host and is more for refrence in editor.
             gameObject.name = "Player " + nameNet;
         }
 
-
+        debug = GetComponent<DebuggingClass>();
+        EventInvulnEvent += RpcInvuln;
     }
 
     // Local Only Constructor
@@ -71,7 +86,6 @@ public class PlayerController : NetworkBehaviour
         var sr = GetComponent<SpriteRenderer>();
         sr.sprite = localSprite;
 
-        // Temporary Name Changer
 
         Camera.main.GetComponent<CamTrack>().Track(gameObject.transform);
     }
@@ -88,41 +102,33 @@ public class PlayerController : NetworkBehaviour
         // Base Torpedo Fire Logic
 
         bool fireDown = Input.GetButtonDown("Fire1");
-        bool fireHeld = Input.GetButton("Fire1");
 
-        if (ammo != 0)
+        if (ammo > 0)
         {
-
-
-            int a = 0;
-
-
             if (fireDown)
             {
                 ammo--;
                 CmdFireTorp();
             }
-            else if (fireHeld)
-            {
-                a++;
-                if (a >= 50)
-                {
-                    ammo--;
-                    CmdFireTorp();
-                    a = 0;
-                }
-            }
-            else
-            {
-                a = 0;
-            }
+            
         }
 
-
+        if (enableDebugging == true && debug != null)
+        {
+            if (Input.GetButtonDown("Jump") && target != null)
+            {
+                debug.CmdSpawnObject(target, Camera.main.ScreenToWorldPoint(Input.mousePosition), UnityEngine.Random.rotation);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                debug.CmdMove(gameObject, Camera.main.ScreenToWorldPoint(Input.mousePosition), transform.rotation);
+            }
+        }
 
     }
 
     // Called once per physics update (0.02s)
+
     void FixedUpdate()
     {
 
@@ -163,6 +169,11 @@ public class PlayerController : NetworkBehaviour
             rb.AddTorque((.01f * linearDrag), ForceMode2D.Impulse);
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            CmdInvuln();
+        }
+
     }
 
     void applyForce(Transform t, float power)
@@ -197,8 +208,38 @@ public class PlayerController : NetworkBehaviour
         // This will instantiate the object on the clients
         NetworkServer.Spawn(torpA);
 
-        // Destroy the bullet after 2 seconds.
+        // Destroy the torp after 2 seconds.
         Destroy(torpA, 20.0f);
+    }
+
+    [Command]
+    public void CmdInvuln()
+    {
+        EventInvulnEvent();
+    }
+
+    [ClientRpc]
+    void RpcInvuln()
+    {
+        StartCoroutine("invuln");
+    }
+
+    IEnumerator invuln()
+    {
+        var start = Time.timeSinceLevelLoad;
+        var col = GetComponent<Collider2D>();
+
+
+        if (col.enabled == false)
+            yield break;
+
+
+        col.enabled = false;
+        while (start + 2f > Time.timeSinceLevelLoad)
+        {
+            yield return null;
+        }
+        col.enabled = true;
     }
 
 
@@ -229,6 +270,8 @@ public class PlayerController : NetworkBehaviour
 
 
     }
+
+
 
 
 }

@@ -11,6 +11,8 @@ public class HealthManager : NetworkBehaviour
     [SyncVar]
     public int health = maxHealth;
 
+    public GameObject destructionEffect;
+
 
     // Use this for initialization
     void Start()
@@ -28,10 +30,10 @@ public class HealthManager : NetworkBehaviour
     public void Damage(int dmg)
     {
         // Checks if not server. Since health is a SyncVar.
-        
+
         health -= dmg;
 
-        Debug.Log("Current HP: " + health + "/" + maxHealth);
+        Debug.Log("Current HP: " + gameObject.name + " : " + health + "/" + maxHealth);
 
         OnChangeHealth();
 
@@ -49,13 +51,37 @@ public class HealthManager : NetworkBehaviour
 
 
 
+
+
     [Command]
     void CmdDeath()
     {
         if (health <= 0)
         {
+            Debug.Log(gameObject.name + " Commanded Death");
+            Effect(destructionEffect);
+
             Destroy(gameObject);
+
+
         }
+
+    }
+
+
+    void Effect(GameObject effect)
+    {
+
+        GameObject fx;
+
+        if (destructionEffect != null)
+        {
+            fx = (GameObject)Instantiate(effect, gameObject.transform.position, gameObject.transform.rotation);
+            NetworkServer.Spawn(fx);
+        }
+
+
+
 
     }
 }
