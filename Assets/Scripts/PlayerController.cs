@@ -186,7 +186,7 @@ public class PlayerController : NetworkBehaviour
 
     // Client calls but server controls
     [Command]
-    void CmdFireTorp()
+    public void CmdFireTorp()
     {
         StartCoroutine("ammoRegen");
         GameObject torpA;

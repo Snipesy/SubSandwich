@@ -16,6 +16,11 @@ public class NetBehaviourScript : NetworkManager
 
     }
 
+    void Fire()
+    {
+
+    }
+
 
 
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
